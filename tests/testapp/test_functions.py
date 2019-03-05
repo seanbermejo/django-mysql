@@ -191,14 +191,12 @@ class StringFunctionTests(TestCase):
     def test_concat_ws_bad_arg(self):
         with pytest.raises(ValueError) as excinfo:
             ConcatWS('a', 'b', separataaa=',')
-        assert ('Invalid keyword arguments for ConcatWS: separataaa' in
-                str(excinfo.value))
+        assert 'Invalid keyword arguments for ConcatWS: separataaa' in str(excinfo.value)
 
     def test_concat_ws_too_few_fields(self):
         with pytest.raises(ValueError) as excinfo:
             ConcatWS('a')
-        assert ('ConcatWS must take at least two expressions' in
-                str(excinfo.value))
+        assert 'ConcatWS must take at least two expressions' in str(excinfo.value)
 
     def test_concat_ws_then_lookups_from_textfield(self):
         Alphabet.objects.create(d='AAA', e='BBB')
@@ -356,18 +354,12 @@ class JSONFunctionTests(JSONFieldTestCase):
     def test_json_extract_kwarg_bad(self):
         with pytest.raises(TypeError) as excinfo:
             JSONExtract('foo', 'bar', foo=1)
-        assert (
-            str(excinfo.value)
-            == "__init__() got an unexpected keyword argument 'foo'"
-        )
+        assert str(excinfo.value) == "__init__() got an unexpected keyword argument 'foo'"
 
     def test_json_extract_output_field_too_many_paths(self):
         with pytest.raises(TypeError) as excinfo:
             JSONExtract('foo', 'bar', 'baz', output_field=1)
-        assert (
-            "output_field won't work with more than one path" in
-            str(excinfo.value)
-        )
+        assert "output_field won't work with more than one path" in str(excinfo.value)
 
     def test_json_extract_flote(self):
         results = list(
@@ -603,9 +595,7 @@ class RegexpFunctionTests(TestCase):
         Alphabet.objects.create(d="A string to search")
         Alphabet.objects.create(d="Something to query")
         Alphabet.objects.create(d="Please do inspect me")
-        Alphabet.objects.update(
-            a=RegexpInstr('d', r'search|query|inspect') - 1,
-        )
+        Alphabet.objects.update(a=RegexpInstr('d', r'search|query|inspect') - 1)
         all_abs = Alphabet.objects.all().order_by('id')
         assert all_abs[0].a == 12
         assert all_abs[1].a == 13

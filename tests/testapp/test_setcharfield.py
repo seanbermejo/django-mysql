@@ -317,26 +317,34 @@ class TestSetF(TestCase):
         assert model.field == {24}
 
     def test_works_with_two_fields(self):
-        CharSetModel.objects.create(field={"snickers", "lion"},
-                                    field2={"apple", "orange"})
+        CharSetModel.objects.create(
+            field={"snickers", "lion"},
+            field2={"apple", "orange"},
+        )
 
         # Concurrent add
-        CharSetModel.objects.update(field=SetF('field').add("mars"),
-                                    field2=SetF('field2').add("banana"))
+        CharSetModel.objects.update(
+            field=SetF('field').add("mars"),
+            field2=SetF('field2').add("banana"),
+        )
         model = CharSetModel.objects.get()
         assert model.field == {"snickers", "lion", "mars"}
         assert model.field2 == {"apple", "orange", "banana"}
 
         # Concurrent add and remove
-        CharSetModel.objects.update(field=SetF('field').add("reeses"),
-                                    field2=SetF('field2').remove("banana"))
+        CharSetModel.objects.update(
+            field=SetF('field').add("reeses"),
+            field2=SetF('field2').remove("banana"),
+        )
         model = CharSetModel.objects.get()
         assert model.field == {"snickers", "lion", "mars", "reeses"}
         assert model.field2 == {"apple", "orange"}
 
         # Swap
-        CharSetModel.objects.update(field=SetF('field').remove("lion"),
-                                    field2=SetF('field2').remove("apple"))
+        CharSetModel.objects.update(
+            field=SetF('field').remove("lion"),
+            field2=SetF('field2').remove("apple"),
+        )
         model = CharSetModel.objects.get()
         assert model.field == {"snickers", "mars", "reeses"}
         assert model.field2 == {"orange"}
@@ -355,10 +363,7 @@ class TestValidation(SimpleTestCase):
 
         with pytest.raises(exceptions.ValidationError) as excinfo:
             field.clean({'a', 'b', 'c', 'd'}, None)
-        assert (
-            excinfo.value.messages[0]
-            == 'Set contains 4 items, it should contain no more than 3.'
-        )
+        assert excinfo.value.messages[0] == 'Set contains 4 items, it should contain no more than 3.'
 
 
 class TestCheck(SimpleTestCase):
@@ -413,10 +418,7 @@ class TestCheck(SimpleTestCase):
         errors = InvalidSetCharFieldModel4.check(actually_check=True)
         assert len(errors) == 1
         assert errors[0].id == 'fields.E120'
-        assert (
-            errors[0].msg
-            == "CharFields must define a 'max_length' attribute."
-        )
+        assert errors[0].msg == "CharFields must define a 'max_length' attribute."
 
 
 class TestDeconstruct(TestCase):

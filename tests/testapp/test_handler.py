@@ -308,10 +308,8 @@ class HandlerMultipartIndexTests(TestCase):
 
     def setUp(self):
         super(HandlerMultipartIndexTests, self).setUp()
-        self.smith1 = AuthorMultiIndex.objects.create(name='John Smith',
-                                                      country='Scotland')
-        self.smith2 = AuthorMultiIndex.objects.create(name='John Smith',
-                                                      country='England')
+        self.smith1 = AuthorMultiIndex.objects.create(name='John Smith', country='Scotland')
+        self.smith2 = AuthorMultiIndex.objects.create(name='John Smith', country='England')
         self.index_name = index_name(AuthorMultiIndex, 'name', 'country')
 
     def test_read_all(self):
@@ -332,7 +330,6 @@ class HandlerNestingTests(BaseAuthorTestCase):
 
     def setUp(self):
         super(HandlerNestingTests, self).setUp()
-
         self.jk_name = NameAuthor.objects.create(name='JK Rowling')
         self.grisham_name = NameAuthor.objects.create(name='John Grisham')
 

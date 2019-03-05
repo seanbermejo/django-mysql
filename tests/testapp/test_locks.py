@@ -79,9 +79,7 @@ class LockTests(TestCase):
             cursor = connection.cursor()
             cursor.execute("SELECT CONNECTION_ID();")
             own_connection_id = cursor.fetchone()[0]
-            assert (
-                import_time_lock.holding_connection_id() == own_connection_id
-            )
+            assert import_time_lock.holding_connection_id() == own_connection_id
 
         assert not import_time_lock.is_held()
 
@@ -198,18 +196,9 @@ class LockTests(TestCase):
         assert Lock.held_with_prefix('mylock') == {}
 
         with Lock('mylock-alpha') as lock:
-            assert (
-                Lock.held_with_prefix('')
-                == {'mylock-alpha': lock.holding_connection_id()}
-            )
-            assert (
-                Lock.held_with_prefix('mylock')
-                == {'mylock-alpha': lock.holding_connection_id()}
-            )
-            assert (
-                Lock.held_with_prefix('mylock-beta')
-                == {}
-            )
+            assert Lock.held_with_prefix('') == {'mylock-alpha': lock.holding_connection_id()}
+            assert Lock.held_with_prefix('mylock') == {'mylock-alpha': lock.holding_connection_id()}
+            assert Lock.held_with_prefix('mylock-beta') == {}
 
         assert Lock.held_with_prefix('') == {}
         assert Lock.held_with_prefix('mylock') == {}
@@ -233,9 +222,7 @@ class TableLockTests(TransactionTestCase):
         conn = connections[connection_name]
         with conn.cursor() as cursor:
             cursor.execute(
-                '''
-                    SHOW OPEN TABLES FROM {} LIKE %s
-                '''.format(conn.settings_dict['NAME']),
+                'SHOW OPEN TABLES FROM {} LIKE %s'.format(conn.settings_dict['NAME']),
                 [table_name],
             )
             rows = cursor.fetchall()
@@ -332,10 +319,7 @@ class TableLockTests(TransactionTestCase):
             with pytest.raises(OperationalError) as excinfo:
                 Alphabet.objects.update(a=2)
 
-        assert (
-            "was locked with a READ lock and can't be updated" in
-            str(excinfo.value)
-        )
+        assert "was locked with a READ lock and can't be updated" in str(excinfo.value)
 
     def test_fails_with_abstract_model(self):
         with pytest.raises(ValueError) as excinfo:

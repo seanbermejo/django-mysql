@@ -103,9 +103,7 @@ def caches_setting_for_tests(options=None, **params):
 
 
 # Spaces are used in the table name to ensure quoting/escaping is working
-def override_cache_settings(BACKEND='django_mysql.cache.MySQLCache',
-                            LOCATION='test cache table',
-                            **kwargs):
+def override_cache_settings(BACKEND='django_mysql.cache.MySQLCache', LOCATION='test cache table', **kwargs):
     return override_settings(
         CACHES=caches_setting_for_tests(
             BACKEND=BACKEND,
@@ -578,36 +576,21 @@ class MySQLCacheTests(MySQLCacheTableMixin, TestCase):
     def test_cache_versioning_get_set_many(self):
         # set, using default version = 1
         cache.set_many({'ford1': 37, 'arthur1': 42})
-        assert (
-            cache.get_many(['ford1', 'arthur1'])
-            == {'ford1': 37, 'arthur1': 42}
-        )
-        assert (
-            cache.get_many(['ford1', 'arthur1'], version=1)
-            == {'ford1': 37, 'arthur1': 42}
-        )
+        assert cache.get_many(['ford1', 'arthur1']) == {'ford1': 37, 'arthur1': 42}
+        assert cache.get_many(['ford1', 'arthur1'], version=1) == {'ford1': 37, 'arthur1': 42}
         assert cache.get_many(['ford1', 'arthur1'], version=2) == {}
 
         assert caches['v2'].get_many(['ford1', 'arthur1']) == {}
-        assert (
-            caches['v2'].get_many(['ford1', 'arthur1'], version=1)
-            == {'ford1': 37, 'arthur1': 42}
-        )
+        assert caches['v2'].get_many(['ford1', 'arthur1'], version=1) == {'ford1': 37, 'arthur1': 42}
         assert caches['v2'].get_many(['ford1', 'arthur1'], version=2) == {}
 
         # set, default version = 1, but manually override version = 2
         cache.set_many({'ford2': 37, 'arthur2': 42}, version=2)
         assert cache.get_many(['ford2', 'arthur2']) == {}
         assert cache.get_many(['ford2', 'arthur2'], version=1) == {}
-        assert (
-            cache.get_many(['ford2', 'arthur2'], version=2)
-            == {'ford2': 37, 'arthur2': 42}
-        )
+        assert cache.get_many(['ford2', 'arthur2'], version=2) == {'ford2': 37, 'arthur2': 42}
 
-        assert (
-            caches['v2'].get_many(['ford2', 'arthur2'])
-            == {'ford2': 37, 'arthur2': 42}
-        )
+        assert caches['v2'].get_many(['ford2', 'arthur2']) == {'ford2': 37, 'arthur2': 42}
         assert caches['v2'].get_many(['ford2', 'arthur2'], version=1) == {}
         assert (
             caches['v2'].get_many(['ford2', 'arthur2'], version=2)
@@ -618,41 +601,20 @@ class MySQLCacheTests(MySQLCacheTableMixin, TestCase):
         caches['v2'].set_many({'ford3': 37, 'arthur3': 42})
         assert cache.get_many(['ford3', 'arthur3']) == {}
         assert cache.get_many(['ford3', 'arthur3'], version=1) == {}
-        assert (
-            cache.get_many(['ford3', 'arthur3'], version=2)
-            == {'ford3': 37, 'arthur3': 42}
-        )
+        assert cache.get_many(['ford3', 'arthur3'], version=2) == {'ford3': 37, 'arthur3': 42}
 
-        assert (
-            caches['v2'].get_many(['ford3', 'arthur3'])
-            == {'ford3': 37, 'arthur3': 42}
-        )
-        assert (
-            caches['v2'].get_many(['ford3', 'arthur3'], version=1)
-            == {}
-        )
-        assert (
-            caches['v2'].get_many(['ford3', 'arthur3'], version=2)
-            == {'ford3': 37, 'arthur3': 42}
-        )
+        assert caches['v2'].get_many(['ford3', 'arthur3']) == {'ford3': 37, 'arthur3': 42}
+        assert caches['v2'].get_many(['ford3', 'arthur3'], version=1) == {}
+        assert caches['v2'].get_many(['ford3', 'arthur3'], version=2) == {'ford3': 37, 'arthur3': 42}
 
         # v2 set, default version = 2, but manually override version = 1
         caches['v2'].set_many({'ford4': 37, 'arthur4': 42}, version=1)
-        assert (
-            cache.get_many(['ford4', 'arthur4'])
-            == {'ford4': 37, 'arthur4': 42}
-        )
-        assert (
-            cache.get_many(['ford4', 'arthur4'], version=1)
-            == {'ford4': 37, 'arthur4': 42}
-        )
+        assert cache.get_many(['ford4', 'arthur4']) == {'ford4': 37, 'arthur4': 42}
+        assert cache.get_many(['ford4', 'arthur4'], version=1) == {'ford4': 37, 'arthur4': 42}
         assert cache.get_many(['ford4', 'arthur4'], version=2) == {}
 
         assert caches['v2'].get_many(['ford4', 'arthur4']) == {}
-        assert (
-            caches['v2'].get_many(['ford4', 'arthur4'], version=1)
-            == {'ford4': 37, 'arthur4': 42}
-        )
+        assert caches['v2'].get_many(['ford4', 'arthur4'], version=1) == {'ford4': 37, 'arthur4': 42}
         assert caches['v2'].get_many(['ford4', 'arthur4'], version=2) == {}
 
     def test_incr_version(self):
@@ -772,9 +734,7 @@ class MySQLCacheTests(MySQLCacheTableMixin, TestCase):
         assert cache.get_or_set('mykey', my_callable) == 'value'
 
     def test_get_or_set_version(self):
-        msg_re = (
-            r"get_or_set\(\) missing 1 required positional argument: 'default'"
-        )
+        msg_re = r"get_or_set\(\) missing 1 required positional argument: 'default'"
         cache.get_or_set('brian', 1979, version=2)
 
         with pytest.raises(TypeError, match=msg_re):
